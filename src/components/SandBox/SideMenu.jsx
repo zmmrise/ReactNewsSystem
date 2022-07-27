@@ -46,7 +46,6 @@ export default function SideMenu() {
         })
         return item
       })
-      console.log(newMenuList)
       setMenuList(newMenuList)
     })
 
