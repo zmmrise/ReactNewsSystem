@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 import { Header } from 'antd/lib/layout/layout'
 import {MenuUnfoldOutlined, MenuFoldOutlined, UserOutlined} from '@ant-design/icons'
-import { Avatar, Dropdown, Menu } from 'antd'
+import { Avatar, Button, Dropdown, Menu } from 'antd'
 export default function TopHeader() {
   const [collapsed, setCollapsed] = useState(false)
+  const {role: {roleName}, username} = JSON.parse(localStorage.getItem("token"))
   const menu = (
     <Menu
       items={[
@@ -11,22 +13,17 @@ export default function TopHeader() {
           key: '1',
           label: (
             <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-              zmm
-            </a>
-          ),
-        },
-        {
-          key: '2',
-          label: (
-            <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-              lmm
+              {roleName}
             </a>
           ),
         },
         {
           key: '4',
           danger: true,
-          label: '退出',
+          onClick: () => {
+            localStorage.removeItem("token")
+          },
+          label: <Link to="/login">退出</Link>
         },
       ]}
     />
@@ -44,7 +41,7 @@ export default function TopHeader() {
           })}
 
           <div style={{float: 'right'}}>
-            <span >欢迎回来</span>
+            <span >欢迎回来，{username}</span>
             <Dropdown overlay={menu}>
               <Avatar size="large" icon={<UserOutlined />}></Avatar>
             </Dropdown>

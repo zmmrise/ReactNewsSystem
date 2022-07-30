@@ -36,11 +36,12 @@ export default function SideMenu() {
   };
   useEffect(() => {
     axios.get("http://localhost:3006/rights?_embed=children").then(res => {
+      console.log(res)
       let newMenuList = res.data.filter(item => {
         item.key === "/home" ? item.label = <Link to={item.key}>{item.title}</Link> : item.label = `${item.title}`
         item.icon = iconList[item.key]
         item.children = item.children.length > 0 && item.children.filter(item1 => {
-          delete item1['rightId']
+          // delete item1['rightId']
           item1.label = <Link to={item1.key}>{item1.title}</Link>
           return item1.pagepermisson === 1
         })

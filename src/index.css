@@ -4,3 +4,6 @@
 /* #root {
   zoom: 1.2;
 } */
+.ant-form-item-label {
+  width: 66px;
+}
