@@ -44,8 +44,14 @@ export default function UserList() {
   };
   const draggleRef = useRef(null);
   useEffect(() => {
+    const {roleId} = JSON.parse(localStorage.getItem('token'))
     axios.get("http://localhost:3006/users").then(res => {
-      setdataSource(res.data)
+      if (roleId !== 1) {
+        setdataSource(res.data.filter(value => value.roleId === roleId))
+      }else {
+        setdataSource(res.data)
+      }
+      
     })
   }, [])
   useEffect(() => {
@@ -68,7 +74,7 @@ export default function UserList() {
       title: '地区',
       dataIndex: 'region',
       render: (region) => {
-        return <b>{region}</b>
+        return <b>{region === '' ? '全球' : region}</b>
       }
     },
     {

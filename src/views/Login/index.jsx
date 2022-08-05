@@ -232,10 +232,9 @@ export default function Login(props) {
       <div className='login-title'>全球新闻发布管理系统</div>
       <Form.Item
       wrapperCol={{
-        offset: 0,
+        offset: 2,
         span: 20,
       }}
-        label="Username"
         name="username"
         rules={[
           {
@@ -249,10 +248,9 @@ export default function Login(props) {
 
       <Form.Item
       wrapperCol={{
-        offset: 0,
+        offset: 2,
         span: 20,
       }}
-        label="Password"
         name="password"
         rules={[
           {
@@ -263,7 +261,9 @@ export default function Login(props) {
       >
         <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder="Password" allowClear/>
       </Form.Item>
-      <Form.Item
+      <Form.Item wrapperCol={{
+        offset: 10,
+      }}
       >
         <Button type="primary" htmlType="submit">
           登录

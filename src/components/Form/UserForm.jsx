@@ -5,6 +5,7 @@ import { Form, Input, Select} from 'antd'
 const {Option} = Select
 const UserForm = forwardRef((props, ref) => {
     const [disabled, setDisabled] = useState(false)
+    const {region, roleId} = JSON.parse(localStorage.getItem('token'))
     useEffect(() => {
         setDisabled(props.regionDisabled)
     }, [props.regionDisabled, props.DateTime])
@@ -59,10 +60,9 @@ const UserForm = forwardRef((props, ref) => {
                         style={{
                             width: 200,
                         }}
-
                     >
                         {
-                            props.regionList.map(value => <Option value={value.value} key={value.id}>{value.value}</Option>)
+                            region !== '' ? props.regionList.filter(value => value.value === region).map(value => <Option value={value.value} key={value.id}>{value.value}</Option>) : props.regionList.map(value => <Option value={value.value} key={value.id}>{value.value}</Option>)
                         }
                     </Select>
                 </Form.Item>
@@ -74,7 +74,6 @@ const UserForm = forwardRef((props, ref) => {
                     ]}>
                     <Select
                         onChange={(value) => {
-                            console.log(ref)
                             if (value === 1) {
                                 ref.current.setFieldsValue({region: ''})
                                 setDisabled(true)
@@ -90,7 +89,7 @@ const UserForm = forwardRef((props, ref) => {
 
                     >
                         {
-                            props.roleList.map(value => <Option value={value.id} key={value.id}>{value.roleName}</Option>)
+                            roleId !== 1 ? props.roleList.filter(value => value.id === roleId).map(value => <Option value={value.id} key={value.id}>{value.roleName}</Option>) : props.roleList.map(value => <Option value={value.id} key={value.id}>{value.roleName}</Option>)
                         }
                     </Select>
                 </Form.Item>
