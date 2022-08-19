@@ -3,12 +3,12 @@ import Particles from 'react-particles-js'
 import {Form, Input, Button, message} from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import './login.css'
-import axios from 'axios'
+import axios from '../../util/http'
 export default function Login(props) {
   const onFinish = (FormInfo) => {
     console.log(FormInfo)
     const {username, password} = FormInfo
-    axios.get(`http://localhost:3006/users?username=${username}&password=${password}&roleState=true&_expand=role`).then(res => {
+    axios.get(`users?username=${username}&password=${password}&roleState=true&_expand=role`).then(res => {
       console.log(res)
       if (res.status === 200) {
         if (res.data.length > 0) {

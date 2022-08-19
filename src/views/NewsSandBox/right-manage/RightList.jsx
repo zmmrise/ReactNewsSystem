@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Table, Tag, Button, Space, Modal, Popover, Switch } from 'antd'
-import axios from 'axios';
+import axios from '../../../util/http';
 import {
   EditTwoTone,
   DeleteTwoTone,
@@ -13,8 +13,7 @@ import {
 export default function RightList() {
   const [dataSource, setdataSource] = useState([])
   useEffect(() => {
-    axios.get("http://localhost:3006/rights?_embed=children").then(res => {
-      console.log(res.data)
+    axios.get("rights?_embed=children").then(res => {
       let newDataSource = res.data.map(item => {
         if (item.key === '/home') {
           delete item['children']
@@ -55,7 +54,7 @@ export default function RightList() {
       key: 'x',
       render: (item) => <Space size="middle">
         <Popover trigger={item.pagepermisson===undefined ? '' : 'click'} title='配置项' content={(<div style={{textAlign: 'center'}}>
-          <Switch defaultChecked={item.pagepermisson===1} onChange={() => switchChange(item)}></Switch>
+          <Switch checked={item.pagepermisson===1} onChange={() => switchChange(item)}></Switch>
         </div>)}>
           <Button icon={<EditTwoTone />} size="large" shape="circle" disabled={item.pagepermisson===undefined}/>
         </Popover>
@@ -76,7 +75,6 @@ export default function RightList() {
         deleteItem(item)
       },
       onCancel() {
-        console.log('cancel')
       }
     })
   }
@@ -85,24 +83,22 @@ export default function RightList() {
     item.pagepermisson = item.pagepermisson === 1 ? 0 : 1
     setdataSource([...dataSource])
     if (item.grade === 1) {
-      axios.patch(`http://localhost:3006/rights/${item.id}`, {pagepermisson: item.pagepermisson})
+      axios.patch(`rights/${item.id}`, {pagepermisson: item.pagepermisson})
     }else {
-      axios.patch(`http://localhost:3006/children/${item.id}`, {pagepermisson: item.pagepermisson})
+      axios.patch(`children/${item.id}`, {pagepermisson: item.pagepermisson})
     }
   }
   const deleteItem = (item) => {
-    console.log(item)
     if (item.grade === 1) {
       setdataSource(dataSource.filter(value => value.id !== item.id))
-      axios.delete(`http://localhost:3006/rights/${item.id}`)
+      axios.delete(`rights/${item.id}`)
     } else {
       let element = dataSource.find(value => value.id === item.rightId)
       let elementIndex = dataSource.indexOf(element)
       let newElement = element.children.filter(childValue => childValue.id !== item.id)
       dataSource[elementIndex].children = [...newElement]
-      console.log(dataSource)
       setdataSource([...dataSource])
-      axios.delete(`http://localhost:3006/children/${item.id}`)
+      axios.delete(`children/${item.id}`)
     }
 
 

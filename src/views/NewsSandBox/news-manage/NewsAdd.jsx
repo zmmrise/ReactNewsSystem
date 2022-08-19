@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { PageHeader, Steps, Button, Form, Input, Select, message, notification } from 'antd'
 import style from './News.module.css'
-import axios from 'axios';
+import axios from '../../../util/http';
 import NewsEditor from '../../../components/news-manage/NewsEditor'
 export default function NewsAdd(props) {
   const [current, setCurrent] = useState(0);
@@ -24,7 +24,7 @@ export default function NewsAdd(props) {
     },
   ];
   useEffect(() => {
-    axios.get('http://localhost:3006/categories').then(res => {
+    axios.get('categories').then(res => {
       setCategoryList(res.data)
     })
   }
@@ -56,11 +56,12 @@ export default function NewsAdd(props) {
   const handleSave = (auditState) => {
     console.log(editorContent, formInfo)
     const {region, username, roleId} = JSON.parse(localStorage.getItem('token'))
-    axios.post("http://localhost:3006/news", {
+    axios.post("news", {
       ...formInfo,
       region,
       author: username,
       roleId,
+      content: editorContent,
     auditState,
     publishState: 0,
     createTime: Date.now(),
@@ -85,6 +86,7 @@ export default function NewsAdd(props) {
       <PageHeader
         className="site-page-header"
         title="撰写新闻"
+        onBack={() => props.history.back()}
       />
       <Steps current={current}>
         {steps.map(value => <Steps.Step title={value.title} description={value.description} key={value.title} />)}

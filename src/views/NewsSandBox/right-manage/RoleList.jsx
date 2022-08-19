@@ -1,6 +1,6 @@
 import { Table, Button, Space, Modal, Tree } from "antd";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../../util/http";
 import {
   EditTwoTone,
   DeleteTwoTone,
@@ -50,13 +50,13 @@ export default function RoleList() {
     },
   ];
   useEffect(() => {
-    axios.get("http://localhost:3006/roles").then((res) => {
+    axios.get("roles").then((res) => {
       setDataSource(res.data);
     });
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:3006/rights?_embed=children").then((res) => {
+    axios.get("rights?_embed=children").then((res) => {
       setRightList(res.data);
     });
   }, []);
@@ -78,7 +78,7 @@ export default function RoleList() {
   };
   const deleteItem = (item) => {
     setDataSource(dataSource.filter((value) => item.id !== value.id));
-    axios.delete(`http://localhost:3006/roles/${item.id}`);
+    axios.delete(`roles/${item.id}`);
   };
 
   const handleOk = () => {
@@ -91,7 +91,7 @@ export default function RoleList() {
       })
     );
     console.log(defaultCheckedKeys);
-    axios.patch(`http://localhost:3006/roles/${roleId}`, {
+    axios.patch(`roles/${roleId}`, {
       rights: defaultCheckedKeys,
     });
     setModalVisible(false);

@@ -10,10 +10,9 @@ import {
   SendOutlined,
 } from "@ant-design/icons";
 import "./index.css";
-import axios from "axios";
-
-export default function SideMenu() {
-  console.log(window.location.hash.substring(1))
+import axios from "../../util/http";
+import { connect } from "react-redux";
+function SideMenu(props) {
   const [MenuList, setMenuList] = useState([]);
   const [openKeys, setOpenKeys] = useState([]);
   const iconList = {
@@ -25,6 +24,7 @@ export default function SideMenu() {
     "/publish-manage": <SendOutlined />,
   };
 
+  
   const rootSubmenuKeys = [
     "/user-manage",
     "/right-manage",
@@ -45,7 +45,7 @@ export default function SideMenu() {
     const {
       role: { rights },
     } = JSON.parse(localStorage.getItem("token"));
-    axios.get("http://localhost:3006/rights?_embed=children").then((res) => {
+    axios.get("rights?_embed=children").then((res) => {
       let newMenuList = res.data.filter((item) => {
         if (rights.includes(item.key) && item.pagepermisson === 1) {
           item.key === "/home"
@@ -58,7 +58,7 @@ export default function SideMenu() {
               if (rights.includes(item1.key)) {
                 delete item1["rightId"];
                 item1.label = <Link to={item1.key}>{item1.title}</Link>;
-                return item1.pagepermisson === 1;
+                return item1.pagepermisson === 1 || item1.routepermisson === 1;
               }
             });
           return item;
@@ -67,15 +67,17 @@ export default function SideMenu() {
       setMenuList(newMenuList);
     });
   }, []);
+  
+
   return (
-    <Layout.Sider trigger={null} collapsible collapsed={false}>
+    <Layout.Sider trigger={null} collapsible collapsed={props.Collapsed}>
       <div style={{ display: "flex", height: "100%", flexDirection: "column" }}>
         <div className="logo">全球新闻发布管理系统</div>
         <div style={{ flex: 1, overflow: "auto" }}>
           <Menu
             theme="dark"
             mode="inline"
-            selectedKeys={[`${window.location.hash.substring(1)}`]}
+            defaultSelectedKeys={[`${window.location.hash.substring(1)}`]}
             items={MenuList}
             openKeys={openKeys}
             onOpenChange={onOpenChange}
@@ -85,3 +87,11 @@ export default function SideMenu() {
     </Layout.Sider>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    Collapsed: state.CollapsedReducer
+  }
+}
+
+export default connect(mapStateToProps)(SideMenu)

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Table, Button, Space, Modal, Switch, message } from 'antd'
-import axios from 'axios';
+import axios from '../../../util/http';
 import {
   EditTwoTone,
   DeleteTwoTone,
@@ -45,7 +45,7 @@ export default function UserList() {
   const draggleRef = useRef(null);
   useEffect(() => {
     const {roleId} = JSON.parse(localStorage.getItem('token'))
-    axios.get("http://localhost:3006/users").then(res => {
+    axios.get("users").then(res => {
       if (roleId !== 1) {
         setdataSource(res.data.filter(value => value.roleId === roleId))
       }else {
@@ -55,7 +55,7 @@ export default function UserList() {
     })
   }, [])
   useEffect(() => {
-    axios.get("http://localhost:3006/roles").then(res => {
+    axios.get("roles").then(res => {
 
       setRoleList(res.data)
     })
@@ -63,7 +63,7 @@ export default function UserList() {
 
 
   useEffect(() => {
-    axios.get("http://localhost:3006/regions").then(res => {
+    axios.get("regions").then(res => {
 
       setRegionList(res.data)
     })
@@ -154,12 +154,12 @@ export default function UserList() {
     //   return value
     // })
 
-    axios.patch(`http://localhost:3006/users/${item.id}`, { roleState: item.roleState })
+    axios.patch(`users/${item.id}`, { roleState: item.roleState })
   }
   const deleteItem = (item) => {
     console.log(item)
     setdataSource(dataSource.filter(value => value.id !== item.id))
-    axios.delete(`http://localhost:3006/users/${item.id}`)
+    axios.delete(`users/${item.id}`)
 
 
   }
@@ -175,7 +175,7 @@ export default function UserList() {
           console.log(user)
           if (dataType === 2) {
             setdataSource([...dataSource, user])
-            axios.post(`http://localhost:3006/users`, user)
+            axios.post(`users`, user)
           }
           else {
             let editUser = user
@@ -186,7 +186,7 @@ export default function UserList() {
               }
               return value
             }))
-            axios.patch(`http://localhost:3006/users/${editUserId}`, editUser)
+            axios.patch(`users/${editUserId}`, editUser)
           }
           message.success('操作成功')
           setModalVisible(false)

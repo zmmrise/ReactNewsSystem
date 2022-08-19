@@ -12,9 +12,12 @@ import AuditList from '../../views/NewsSandBox/audit-manage/AuditList'
 import Published from '../../views/NewsSandBox/publish-manage/Published'
 import Unpublished from '../../views/NewsSandBox/publish-manage/Unpublished'
 import Sunset from '../../views/NewsSandBox/publish-manage/Sunset'
+import NewsPreview from '../../views/NewsSandBox/news-manage/NewsPreview'
+import NewsEdit from '../../views/NewsSandBox/news-manage/NewsEdit'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-
+import axios from '../../util/http'
+import {Spin} from 'antd'
+import { connect } from 'react-redux'
 const LocalRouterMap = {
     "/home": Home,
     "/user-manage/list": UserList,
@@ -28,41 +31,52 @@ const LocalRouterMap = {
     "/publish-manage/unpublished": Unpublished,
     "/publish-manage/published": Published,
     "/publish-manage/sunset": Sunset,
+    "/news-manage/preview/:id": NewsPreview,
+    "/news-manage/update/:id": NewsEdit
 }
-export default function NewsRouter() {
-    
+function NewsRouter(props) {
     const [backendRoutes, setBackendRoutes] = useState([])
-    const {role: {rights}} = JSON.parse(localStorage.getItem('token'))
+    const { role: { rights } } = JSON.parse(localStorage.getItem('token'))
     useEffect(() => {
         Promise.all(
-            [axios.get("http://localhost:3006/rights"), axios.get("http://localhost:3006/children")]
+            [axios.get("rights"), axios.get("children")]
         ).then(res => {
             setBackendRoutes([...res[0].data, ...res[1].data])
         })
     }, [])
 
     const checkRoute = (value) => {
-        return LocalRouterMap[value.key] && value.pagepermisson
+        return LocalRouterMap[value.key] && (value.pagepermisson || value.routepermisson)
     }
     const checkUserPermission = (value) => {
         return rights.includes(value.key)
     }
     return (
-        <Switch>
-            {
-                backendRoutes.map(value => {
-                    if (checkRoute(value) && checkUserPermission(value)) {
-                        return <Route key={value.key} path={value.key} component={LocalRouterMap[value.key]} exact></Route>
-                    }else {
-                        return null
-                    }
-                    
-                })
-            }
-            <Redirect from='/' to='/home' exact/>
-            <Route path="*" component={Nopermission}></Route>
-    </Switch>
+        <Spin size='large' spinning={props.Loading}>
+            <Switch>
+                {
+                    backendRoutes.map(value => {
+                        if (checkRoute(value) && checkUserPermission(value)) {
+                            return <Route key={value.key} path={value.key} component={LocalRouterMap[value.key]} exact></Route>
+                        } else {
+                            return null
+                        }
+
+                    })
+                }
+                <Redirect from='/' to='/home' exact />
+                <Route path="*" component={Nopermission}></Route>
+            </Switch>
+        </Spin>
+
     )
 }
-    
+
+
+const mapStateToProps = (state) => {
+    return {
+        Loading: state.LoadingReducer
+    }
+}
+export default connect(mapStateToProps)(NewsRouter)
 

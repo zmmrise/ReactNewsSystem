@@ -7,8 +7,9 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Menu } from "antd";
-export default function TopHeader() {
-  const [collapsed, setCollapsed] = useState(false);
+import { connect } from "react-redux";
+function TopHeader(props) {
+  console.log(props)
   const {
     role: { roleName },
     username,
@@ -39,6 +40,10 @@ export default function TopHeader() {
       ]}
     />
   );
+
+  const changeCollapsed = () => {
+    props.changeCollapsed()
+  }
   return (
     <Header
       className="site-layout-background"
@@ -46,15 +51,15 @@ export default function TopHeader() {
         padding: "0 16px",
       }}
     >
-      {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+      {React.createElement(props.Collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
         className: "trigger",
-        onClick: () => setCollapsed(!collapsed),
+        onClick: () => changeCollapsed()
       })}
 
       <div style={{ float: "right" }}>
         <span>
           欢迎回来，<span style={{ color: "#1890ff" }}>{username}</span>
-        </span>
+        </span> 
         <Dropdown overlay={menu}>
           <Avatar size="large" icon={<UserOutlined />}></Avatar>
         </Dropdown>
@@ -62,3 +67,19 @@ export default function TopHeader() {
     </Header>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    Collapsed: state.CollapsedReducer
+  }
+}
+const mapDispatchToProps = {
+  changeCollapsed() {
+    return {
+      type: 'change_collapsed'
+    }
+  }
+  
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TopHeader)
