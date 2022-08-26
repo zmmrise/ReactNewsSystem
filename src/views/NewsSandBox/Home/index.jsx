@@ -11,38 +11,28 @@ import axios from '../../../util/http';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as Echarts from 'echarts'
+import _ from 'loadsh'
+import { useRef } from 'react';
 export default function Home() {
-  const [visible, setVisible] = useState(true);
+  const pieRef = useRef()
+  const [visible, setVisible] = useState(false);
 
   const showDrawer = () => {
     setVisible(true);
+    setTimeout(() => {
+      renderPieView("zmm")
+    }, 0);
   };
 
   const onClose = () => {
     setVisible(false);
   };
-  const option = {
-    title: {
-      text: 'ECharts 入门示例'
-    },
-    tooltip: {},
-    legend: {
-      data: ['销量']
-    },
-    xAxis: {
-      data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
-    },
-    yAxis: {},
-    series: [
-      {
-        name: '销量',
-        type: 'bar',
-        data: [5, 20, 36, 10, 10, 20]
-      }
-    ]
-  };
+  
   const [dataSource, setDataSource] = useState([])
   const [dataSourceStar, setDataSourceStar] = useState([])
+  const [pieChart, setpieChart] = useState(null)
+  const [pieData, setpieData] = useState([])
+
   const { username, role: { roleName }, region } = JSON.parse(localStorage.getItem('token'))
   useEffect(() => {
     axios.get(`/news?publishState=2&_expand=category&_sort=view&_order=desc&_limit=6`).then(res => {
@@ -56,9 +46,94 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    axios.get(`/news?publishState=2&_expand=category`).then(res => {
+      renderBarView(_.groupBy(res.data, item => item.category.title))
+      setpieData(res.data)
+    })
+    return () => {
+      window.onresize = null
+    }
+  }, [])
+  const renderBarView = (obj) => {
+    let option = {
+      title: {
+        text: '新闻分类图示'
+      },
+      tooltip: {},
+      legend: {
+        data: ['数量']
+      },
+      xAxis: {
+        data: Object.keys(obj),
+        axisLabel: {
+          rotate: "45"
+        }
+      },
+      yAxis: {},
+      series: [
+        {
+          name: '数量',
+          type: 'bar',
+          data: Object.values(obj).map(item => item.length)
+        }
+      ]
+    };
     var myEcharts = Echarts.init(document.getElementById('main'))
     myEcharts.setOption(option)
-  }, [])
+    window.onresize = () => {
+      myEcharts.resize()
+    }
+  }
+
+  const renderPieView = () => {
+    var currentList = pieData.filter(item => item.author === username)
+    var groupObj = _.groupBy(currentList, item => item.category.title)
+    var List = []
+    for (const key in groupObj) {
+      var itemObj = {name: key, value: groupObj[key].length}
+      List.push(itemObj)
+    }
+    let option = {
+      title: {
+        text: '当前用户新闻分类展示',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [
+        {
+          name: 'Access From',
+          type: 'pie',
+          radius: '50%',
+          data: List,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    };
+    var myChart;
+    if (!pieChart) {
+      myChart = Echarts.init(pieRef.current)
+      setpieChart(myChart)
+    }else {
+      myChart = pieChart
+    }
+    option && myChart.setOption(option);
+
+    window.onresize = () => {
+      myChart.resize()
+    }
+  }
   return (
     <div>
       <div className="site-card-wrapper">
@@ -105,18 +180,17 @@ export default function Home() {
               <Card.Meta
                 avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
                 title={username}
-                description={region ? <Space><b>{region}{roleName}</b></Space> : <Space><b>'全球'{roleName}</b></Space>}
+                description={region ? <Space><b>{region}{roleName}</b></Space> : <Space><b>全球 {roleName}</b></Space>}
               />
             </Card>
           </Col>
         </Row>
-      </div>
-      <div id="main" style={{ width: '600px', height: '400px', marginTop: '-80px' }}></div>        
-      <Drawer title="Basic Drawer" placement="right" onClose={onClose} visible={visible}>
-        <div>
-          zmm
+        <Drawer width="500px" title="个人新闻分类" placement="right" onClose={onClose} visible={visible}>
+        <div ref={pieRef} style={{width: '100%', height: '400px', marginTop: '30px'}}>
         </div>
       </Drawer>
+        <div id="main" style={{ width: '100%', height: '360px', marginTop: '-13px' }}></div> 
+      </div>
     </div>
   )
 }
