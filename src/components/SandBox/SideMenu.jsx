@@ -73,7 +73,7 @@ function SideMenu(props) {
   return (
     <Layout.Sider trigger={null} collapsible collapsed={props.Collapsed}>
       <div style={{ display: "flex", height: "100%", flexDirection: "column" }}>
-        <div className="logo">{props.Collapsed ? <img src={logoImg} style={{width: '40px', height: '40px'}}/> : '全球新闻发布管理系统'}</div>
+        <div className="logo">{props.Collapsed ? <img src={logoImg} style={{width: '40px', height: '40px'}} alt=""/> : '全球新闻发布管理系统'}</div>
         <div style={{ flex: 1, overflow: "auto" }}>
           <Menu
             theme="dark"

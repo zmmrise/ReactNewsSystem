@@ -9,7 +9,6 @@ import {
 import { Avatar, Button, Dropdown, Menu } from "antd";
 import { connect } from "react-redux";
 function TopHeader(props) {
-  console.log(props)
   const {
     role: { roleName },
     username,

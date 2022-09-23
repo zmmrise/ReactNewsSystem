@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Table, Button, Space, Modal, Switch, message } from 'antd'
+import { Button, Space, Modal, Switch, message } from 'antd'
+import ZTable from "../../../components/Table/Table"
 import axios from '../../../util/http';
 import {
   EditTwoTone,
@@ -44,14 +45,14 @@ export default function UserList() {
   };
   const draggleRef = useRef(null);
   useEffect(() => {
-    const {roleId} = JSON.parse(localStorage.getItem('token'))
+    const { roleId } = JSON.parse(localStorage.getItem('token'))
     axios.get("users").then(res => {
       if (roleId !== 1) {
         setdataSource(res.data.filter(value => value.roleId === roleId))
-      }else {
+      } else {
         setdataSource(res.data)
       }
-      
+
     })
   }, [])
   useEffect(() => {
@@ -124,7 +125,7 @@ export default function UserList() {
     setDateTime(new Date().getTime())
     if (item.roleId === 1) {
       setRegionDisabled(true)
-    }else {
+    } else {
       setRegionDisabled(false)
     }
     console.log(item)
@@ -202,10 +203,16 @@ export default function UserList() {
     setDataType(2)
     setModalVisible(true)
   }
+  const onSelectChange = (SelectedRows) => {
+    //do something
+  }
+  // useEffect(() => {
+  //   console.log(selectedRows)
+  // }, [selectedRows])
   return (
     <div>
       <Button type="primary" style={{ marginBottom: '20px' }} size="large" onClick={addUser}>添加用户</Button>
-      <Table dataSource={dataSource} rowKey={(row) => row.id} columns={columns} pagination={{ pageSize: 5 }} scroll={{
+      <ZTable isPagination={true}  onSelectChange={onSelectChange} isSelect={true} dataSource={dataSource} columns={columns}  pageSize={5}  scroll={{
         y: 540,
       }} />
       <Modal title={<div

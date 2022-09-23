@@ -1,12 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import { Table, Space, Button, Modal } from 'antd'
-import {
-    EditTwoTone,
-    DeleteTwoTone,
-    UpCircleTwoTone,
-    ExclamationCircleOutlined
-  } from '@ant-design/icons';
+import { Table } from 'antd'
 export default function NewsPublish(props) {
     console.log(props)
     const columns = [

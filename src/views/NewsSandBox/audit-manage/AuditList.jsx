@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Button, Modal, notification, Tag } from 'antd'
+import { Button, notification, Tag } from 'antd'
+import ZTable from "../../../components/Table/Table"
 import axios from '../../../util/http';
 import { Link } from 'react-router-dom';
 export default function AuditList(props) {
@@ -102,7 +103,7 @@ export default function AuditList(props) {
   }
   return (
     <div>
-      <Table dataSource={dataSource} rowKey={(row) => row.id} columns={columns} pagination={{ pageSize: 5 }} scroll={{
+      <ZTable dataSource={dataSource} columns={columns} pageSize={5} scroll={{
         y: 540,
       }} />
     </div>
