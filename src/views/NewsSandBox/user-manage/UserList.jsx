@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Space, Modal, Switch, message } from 'antd'
-import ZTable from "../../../components/Table/Table"
-import axios from '../../../util/http';
+import ZTable from "components/Table/Table"
+import axios from '@/util/http';
 import {
   EditTwoTone,
   DeleteTwoTone,
